@@ -169,7 +169,7 @@ module Xapit
       matches = @query_parser.matchset(options).matches
       records_by_class = {}
       matches.each do |match|
-        class_name, id = match.document.data.split('-')
+        class_name, id = match.document.data.split('-', 2)
         records_by_class[class_name] ||= []
         records_by_class[class_name] << id
       end
@@ -177,8 +177,8 @@ module Xapit
         records_by_class[class_name] = class_name.constantize.xapit_adapter.find_multiple(ids)
       end
       matches.map do |match|
-        class_name, id = match.document.data.split('-')
-        member = records_by_class[class_name].detect { |m| m.id == id.to_i }
+        class_name, id = match.document.data.split('-', 2)
+        member = records_by_class[class_name].detect { |m| m.id.to_s == id.to_s }
         member.xapit_relevance = match.percent
         member
       end
